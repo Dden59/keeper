@@ -1,1 +1,46 @@
-...
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rocket Keeper</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <h1>Rocket Keeper</h1>
+    <p class="slogan">Твой персональный помощник в игре</p>
+
+    <div class="setup">
+      <label>Начальная ставка:</label>
+      <input id="startBet" type="number" value="100" />
+      <label>Цифровой множитель:</label>
+      <input id="multiplier" type="number" value="2" />
+      <label>Целевой множитель:</label>
+      <input type="text" value="1.5" disabled />
+      <label>Текущий баланс:</label>
+      <input id="balance" type="number" value="1000" />
+      <button onclick="startGame()" class="start-btn">Начать игру</button>
+    </div>
+
+    <div class="actions">
+      <button onclick="logResult(true)">Выиграл</button>
+      <button onclick="logResult(false)">Проиграл</button>
+    </div>
+
+    <div class="info">
+      <p>Текущая ставка: <span id="currentBet">100</span></p>
+      <p>Баланс: <span id="currentBalance">1000</span></p>
+    </div>
+
+    <div class="greed-bar">
+      <span id="greedEmojiStart">🙂</span>
+      <div class="greed-meter"><div id="greedLevel"></div></div>
+      <span id="greedEmojiEnd">🔥</span>
+    </div>
+
+    <div id="message" class="message"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
