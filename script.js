@@ -1,81 +1,114 @@
-let round = 0;
+let baseBet = 100;
+let currentBet = 100;
+let balance = 1000;
 let winStreak = 0;
 let loseStreak = 0;
-let balance = 0;
-let currentBet = 0;
 let greedLevel = 0;
-let initialBet = 0;
+let gameStarted = false;
+let totalProfitTarget = 0;
 
-function startGame() {
-    initialBet = parseFloat(document.getElementById('initialBet').value);
-    balance = parseFloat(document.getElementById('balance').value);
-    round = 0;
-    winStreak = 0;
-    loseStreak = 0;
-    greedLevel = 0;
-    currentBet = initialBet;
-    updateUI();
-    document.getElementById('recommendation').textContent = '';
+const greedBar = document.getElementById("greedBar");
+const currentBetDisplay = document.getElementById("currentBet");
+const currentBalanceDisplay = document.getElementById("currentBalance");
+const notifications = document.getElementById("notifications");
+
+function updateGreedBar() {
+    greedBar.style.setProperty("--greed", `${greedLevel}%`);
+    greedBar.style.setProperty("width", `${greedLevel}%`);
 }
 
-function registerResult(win) {
-    round++;
-
-    if (win) {
-        balance += currentBet * 0.5;
-        winStreak++;
-        loseStreak = 0;
-        currentBet = initialBet;
-        greedLevel = Math.max(0, greedLevel - 10);
-    } else {
-        balance -= currentBet;
-        loseStreak++;
-        winStreak = 0;
-        let totalLoss = 0;
-        for (let i = 1; i <= loseStreak; i++) {
-            totalLoss += Math.pow(2, i - 1) * initialBet;
-        }
-        currentBet = Math.ceil((totalLoss * 1.5) - (currentBet * 0.5));
-        greedLevel = Math.min(100, greedLevel + 10);
-    }
-
-    document.getElementById('balance').value = Math.round(balance);
-    showNotification();
-    updateUI();
+function showNotification(msg) {
+    notifications.innerText = msg;
+    notifications.style.display = "block";
+    setTimeout(() => {
+        notifications.style.display = "none";
+    }, 3500);
 }
 
-function updateUI() {
-    document.getElementById('roundInfo').textContent = `Раунд: ${round}`;
-    document.getElementById('currentBet').textContent = `Текущая ставка: ${Math.ceil(currentBet)}₽`;
-    document.getElementById('greedBar').style.width = `${greedLevel}%`;
-
-    const emoji = greedLevel < 30 ? '🙂' : greedLevel < 70 ? '😬' : '😈';
-    document.getElementById('greedEmoji').textContent = emoji;
-    document.getElementById('greedLevel').textContent = `Жадность: ${greedLevel}%`;
-
-    const riskSteps = Math.floor(Math.log2(balance / currentBet));
-    if (riskSteps < 3) {
-        document.getElementById('recommendation').textContent = 'Внимание! Риск потерять баланс слишком высок. Уменьши ставку или увеличь банк.';
-    }
+function calculateNextBet(losses, targetProfit) {
+    return Math.ceil((targetProfit + (baseBet * losses)) / 0.5);
 }
 
 function resetGame() {
-    document.getElementById('initialBet').value = 100;
-    document.getElementById('balance').value = 1000;
-    document.getElementById('notifications').textContent = '';
-    startGame();
+    gameStarted = false;
+    winStreak = 0;
+    loseStreak = 0;
+    greedLevel = 0;
+    notifications.innerText = "";
+    document.getElementById("gameSection").style.display = "none";
 }
 
-function showNotification() {
-    let text = '';
-    if (winStreak === 2) text = 'У тебя хорошо получается, продолжай в том же духе 👍';
-    else if (winStreak === 3) text = 'Горжусь тобой 😇';
-    else if (winStreak === 4) text = 'Пристегни ремни, мы взлетаем 🚀';
-    else if (winStreak >= 5) text = 'Куда потратим деньги? 😂';
+document.getElementById("startBtn").addEventListener("click", () => {
+    baseBet = parseFloat(document.getElementById("baseBet").value);
+    balance = parseFloat(document.getElementById("balance").value);
+    currentBet = baseBet;
+    totalProfitTarget = balance;
 
-    if (loseStreak === 2) text = 'Ничего страшного, я верю в тебя 🥺';
-    else if (loseStreak === 3) text = 'Сделай паузу на кофе ☕️';
-    else if (loseStreak >= 4) text = 'Высокий риск слить баланс!';
+    document.getElementById("gameSection").style.display = "block";
+    updateDisplay();
+    gameStarted = true;
+});
 
-    document.getElementById('notifications').textContent = text;
+document.getElementById("winBtn").addEventListener("click", () => {
+    if (!gameStarted) return;
+
+    const profit = currentBet * 1.5;
+    balance += profit;
+    winStreak++;
+    loseStreak = 0;
+
+    if (greedLevel > 0) greedLevel -= 10;
+    updateGreedBar();
+
+    totalProfitTarget = balance;
+
+    if (winStreak === 2) showNotification("У тебя хорошо получается, продолжай в том же духе👍");
+    if (winStreak === 3) showNotification("Горжусь тобой 😇");
+    if (winStreak === 4) showNotification("Пристегни ремни, мы взлетаем🚀");
+    if (winStreak === 5) showNotification("Куда потратим деньги? 😂");
+
+    currentBet = baseBet;
+    updateDisplay();
+});
+
+document.getElementById("loseBtn").addEventListener("click", () => {
+    if (!gameStarted) return;
+
+    balance -= currentBet;
+    loseStreak++;
+    winStreak = 0;
+
+    if (greedLevel < 100) greedLevel += 10;
+    updateGreedBar();
+
+    if (loseStreak === 2) showNotification("Ничего страшного, я верю в тебя 🥺");
+    if (loseStreak === 3) showNotification("Сделай паузу на кофе ☕️");
+    if (loseStreak === 4) showNotification("Высокий риск слить баланс!");
+
+    if (balance <= 0) {
+        showNotification("У вас недостаточно средств для ставки 😭");
+        return;
+    }
+
+    let nextBet = calculateNextBet(loseStreak, totalProfitTarget - balance);
+    if (nextBet > balance) {
+        showNotification("У вас недостаточно средств для ставки 😭");
+        return;
+    }
+
+    currentBet = nextBet;
+    updateDisplay();
+});
+
+function updateDisplay() {
+    currentBetDisplay.textContent = currentBet.toFixed(2);
+    currentBalanceDisplay.textContent = balance.toFixed(2);
+
+    if (balance < baseBet * 3) {
+        showNotification("Осталось мало попыток.");
+    }
 }
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+    window.location.reload();
+});
