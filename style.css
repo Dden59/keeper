@@ -1,112 +1,139 @@
 body {
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #2a004f, #570066);
-  font-family: 'Segoe UI', sans-serif;
-  color: white;
-  overflow-x: hidden;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(145deg, #2c003e, #6e00a8);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    min-height: 100vh;
+    padding: 20px;
+    animation: neonFade 5s infinite alternate;
 }
 
-.app {
-  padding: 20px;
-  max-width: 400px;
-  margin: auto;
-  text-align: center;
+@keyframes neonFade {
+    from { filter: brightness(1); }
+    to { filter: brightness(1.3); }
 }
 
-h1 {
-  font-size: 32px;
-  margin-bottom: 5px;
+.app-container {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+    text-align: center;
 }
 
-.slogan {
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 20px;
+.logo {
+    font-size: 2em;
+    color: #ff66ff;
+    margin-bottom: 5px;
 }
 
-.setup label {
-  display: block;
-  margin-top: 15px;
+.tagline {
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    color: #ccc;
 }
 
-.setup input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 5px;
-  border: none;
+.input-group {
+    margin: 12px 0;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+input[type="number"],
+input[disabled] {
+    width: 100%;
+    padding: 8px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    background: #222;
+    color: white;
 }
 
 .start-btn {
-  width: 100%;
-  margin-top: 20px;
-  background: #9f44ff;
-  color: white;
-  border: none;
-  padding: 15px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  animation: pulse 2s infinite;
+    margin-top: 15px;
+    padding: 12px;
+    background: #a100ff;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 1em;
+    color: white;
+    cursor: pointer;
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(159, 68, 255, 0.4); }
-  70% { box-shadow: 0 0 0 20px rgba(159, 68, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(159, 68, 255, 0); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-.actions button {
-  width: 48%;
-  margin: 10px 1%;
-  padding: 10px;
-  background-color: #5e00b3;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
+.status-section {
+    margin-top: 20px;
 }
 
-.info {
-  margin-top: 20px;
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
 }
 
-.greed-bar {
-  margin-top: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.action-buttons button {
+    width: 48%;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 6px;
+    border: none;
+    background: #6200ea;
+    color: white;
+    cursor: pointer;
 }
 
 .greed-meter {
-  flex: 1;
-  height: 15px;
-  background: #333;
-  margin: 0 10px;
-  border-radius: 20px;
-  overflow: hidden;
+    margin-top: 10px;
+}
+
+#greedBar {
+    height: 8px;
+    background: #ff00ff;
+    border-radius: 5px;
+    transition: width 0.4s ease;
+}
+
+#greedEmoji {
+    font-size: 1.5em;
 }
 
 #greedLevel {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #a020f0, #ff00ff);
-  transition: width 0.5s ease-in-out;
+    margin-top: 6px;
 }
 
-.message {
-  margin-top: 20px;
-  background: rgba(0,0,0,0.4);
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
-  color: #ffccff;
-  animation: fadeIn 1s;
+.notifications {
+    font-size: 0.9em;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px;
+    border-radius: 6px;
 }
 
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+.reset-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: #333;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
 }
