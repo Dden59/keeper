@@ -1,108 +1,105 @@
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(145deg, #2a004e, #5b00b0);
-    color: white;
-    overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #2d006e, #7c1fff);
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  margin: 0;
 }
 
-.app-container {
-    padding: 20px;
-    max-width: 400px;
-    margin: 0 auto;
-    text-align: center;
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .logo {
-    height: 40px;
-    vertical-align: middle;
-    margin-left: 10px;
-}
-
-.header h1 {
-    font-size: 2em;
-    margin: 0;
+  width: 36px;
+  height: 36px;
 }
 
 .subtitle {
-    font-size: 0.9em;
-    opacity: 0.7;
-    margin-bottom: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  color: #ccc;
 }
 
-input {
-    width: 80%;
-    padding: 8px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    text-align: center;
+label, .note, .recommendation {
+  display: block;
+  margin: 1rem 0 0.5rem;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 button {
-    padding: 10px 20px;
-    background: #b45fff;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    margin: 10px;
-    cursor: pointer;
-    transition: 0.3s;
+  padding: 0.7rem 1.5rem;
+  margin: 0.5rem;
+  font-size: 1rem;
+  background: #7c1fff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 0 10px #a44dff;
 }
 
 button:hover {
-    background: #d387ff;
+  background: #a44dff;
+  box-shadow: 0 0 15px #c97fff;
 }
 
-button.start-game {
-    animation: pulse 2s infinite;
-    display: block;
-    margin: 20px auto;
+.start-button {
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(180, 95, 255, 0.7); }
-    70% { box-shadow: 0 0 0 20px rgba(180, 95, 255, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(180, 95, 255, 0); }
+  0% { box-shadow: 0 0 10px #a44dff; }
+  50% { box-shadow: 0 0 20px #ffffff; }
+  100% { box-shadow: 0 0 10px #a44dff; }
 }
 
-.hidden {
-    display: none;
+.greed-meter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 2rem 0;
 }
 
-.greed-bar-container {
-    margin-top: 20px;
+input[type="range"] {
+  width: 70%;
+  height: 8px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #4f0b9f, #ff4de1);
+  appearance: none;
 }
 
-.greed-bar {
-    width: 100%;
-    height: 20px;
-    background: #4c4c4c;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 5px;
+.status {
+  margin-top: 1rem;
+  background: rgba(0,0,0,0.3);
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
 }
 
-.greed-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(to right, #00ff88, #ff00ff);
-    transition: width 0.5s ease;
-}
-
-.greed-message {
-    font-size: 0.9em;
-    margin-top: 10px;
-    min-height: 20px;
-}
-
-.notification {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid #fff2;
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 20px;
-    font-size: 0.85em;
-    display: none;
+.reset {
+  background: #444;
+  margin-top: 1rem;
 }
