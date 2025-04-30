@@ -1,51 +1,53 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Rocket Keeper</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rocket Keeper</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="app">
-        <h1 class="logo">Rocket Keeper</h1>
-        <p class="slogan">Твой персональный помощник в игре Rocket Queen</p>
+  <div class="app">
+    <header>
+      <h1>🚀 Rocket Keeper</h1>
+      <p class="subtitle">Твой персональный помощник в игре</p>
+    </header>
 
-        <div class="section">
-            <label>Начальная ставка (₽):</label>
-            <input type="number" id="baseBet" value="100" />
-        </div>
+    <div class="screen" id="start-screen">
+      <label>Укажи свой баланс (₽):</label>
+      <input type="number" id="balance-input" placeholder="Рекомендуемый баланс от 2500₽"/>
 
-        <div class="section">
-            <label>Баланс (₽):</label>
-            <input type="number" id="balance" value="1000" />
-        </div>
+      <button onclick="calculateInitialStake()">Рассчитать ставку</button>
+      <div id="suggestion-box"></div>
 
-        <button id="startBtn" class="btn animated">Начать игру</button>
+      <label>Желаемая ставка (можно изменить):</label>
+      <input type="number" id="custom-stake-input" disabled />
 
-        <div id="gameSection" style="display:none;">
-            <div class="section bet-display">
-                <p>Текущая ставка: <span id="currentBet">-</span> ₽</p>
-                <p>Текущий баланс: <span id="currentBalance">-</span> ₽</p>
-                <p>Целевой множитель: <span>1.5x</span></p>
-            </div>
-
-            <div class="button-row">
-                <button id="winBtn" class="btn success">Выиграл 💸</button>
-                <button id="loseBtn" class="btn danger">Проиграл 😢</button>
-            </div>
-
-            <div class="greed-bar">
-                <span class="emoji">😇</span>
-                <div class="bar" id="greedBar"></div>
-                <span class="emoji">😈</span>
-            </div>
-
-            <div id="notifications" class="notifications"></div>
-            <button id="resetBtn" class="btn reset">Сбросить</button>
-        </div>
+      <button class="start-btn" onclick="startGame()">Начать игру</button>
     </div>
 
-    <script src="script.js"></script>
+    <div class="screen" id="game-screen" style="display:none;">
+      <div class="info-row">
+        <p>Баланс: <span id="current-balance">0</span>₽</p>
+        <p>Текущая ставка: <span id="current-stake">0</span>₽</p>
+      </div>
+
+      <div class="buttons">
+        <button onclick="handleResult(true)">Выиграл 💸</button>
+        <button onclick="handleResult(false)">Проиграл 😢</button>
+      </div>
+
+      <div class="greed-bar-container">
+        <span>😇</span>
+        <div class="greed-bar" id="greed-bar"></div>
+        <span>👹</span>
+      </div>
+
+      <div id="notifications"></div>
+      <button onclick="resetGame()" class="reset-btn">Сбросить</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
