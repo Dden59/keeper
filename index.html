@@ -1,59 +1,52 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket Keeper</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rocket Keeper</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <h1>Rocket Keeper</h1>
-            <img src="logo.png" alt="Логотип" class="logo">
-            <p class="subtitle">Твой персональный помощник в игре</p>
-        </div>
+  <div class="container">
+    <header>
+      <h1 class="title">
+        Rocket Keeper
+        <img src="logo.png" alt="Логотип" class="logo" />
+      </h1>
+      <p class="subtitle">Твой персональный помощник в игре</p>
+    </header>
 
-        <div class="start-section" id="startSection">
-            <label>Укажи свой баланс:</label>
-            <input type="number" id="userBalance" placeholder="₽">
-            <p class="note">Рекомендуемый баланс от 2,500₽</p>
-            <button onclick="calculateRecommendedBet()">Рассчитать ставку</button>
-        </div>
+    <section class="setup">
+      <label for="balance">Укажи свой баланс в Rocket Queen (₽):</label>
+      <input type="number" id="balance" />
+      <p class="note">Рекомендуемый баланс от 2,500 ₽</p>
+      <button onclick="calculateInitialBet()">Рассчитать ставку</button>
+    </section>
 
-        <div class="bet-section hidden" id="betSection">
-            <p>Рекомендуемая ставка: <span id="recommendedBetDisplay"></span></p>
-            <label>Ты можешь изменить ставку (на свой страх и риск):</label>
-            <input type="number" id="currentBetInput">
-            <button class="start-game" onclick="startGame()">Начать игру</button>
-        </div>
+    <section id="bet-setup" style="display:none;">
+      <p class="recommendation">Рекомендуемая ставка (на 6 проигрышей):</p>
+      <input type="number" id="bet" />
+      <p class="note">Ты ставишь и забираешь при коэффициенте <strong>1.5x</strong></p>
+      <button class="start-button" onclick="startGame()">Начать игру</button>
+    </section>
 
-        <div class="game-section hidden" id="gameSection">
-            <div class="status-bar">
-                <p>Баланс: <span id="displayBalance"></span></p>
-                <p>Текущая ставка: <span id="displayBet"></span></p>
-                <p>Целевой множитель: 1.5x</p>
-            </div>
+    <section id="game-ui" style="display:none;">
+      <div class="greed-meter">
+        <span id="greed-emoji">😇</span>
+        <input type="range" id="greed" min="0" max="100" value="0" disabled />
+        <span>😈</span>
+      </div>
 
-            <div class="buttons">
-                <button class="win" onclick="handleResult(true)">Выиграл💸</button>
-                <button class="lose" onclick="handleResult(false)">Проиграл😢</button>
-            </div>
+      <div class="buttons">
+        <button class="win" onclick="recordResult(true)">Выиграл 💸</button>
+        <button class="lose" onclick="recordResult(false)">Проиграл 😢</button>
+      </div>
 
-            <div class="greed-bar-container">
-                <p>Шкала жадности</p>
-                <div class="greed-bar">
-                    <div id="greedFill" class="greed-fill"></div>
-                </div>
-                <p id="greedMessage" class="greed-message">Начни игру</p>
-            </div>
+      <p id="status" class="status"></p>
+      <button class="reset" onclick="resetGame()">Сбросить</button>
+    </section>
+  </div>
 
-            <div class="notification" id="notificationBox"></div>
-
-            <button onclick="resetGame()" class="reset">Сбросить игру</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
