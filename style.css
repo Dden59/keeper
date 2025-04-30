@@ -1,147 +1,108 @@
 body {
   margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #2b1055, #752c8b);
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #2d005f, #7f00ff);
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
-.container {
-  padding: 1rem;
-  max-width: 480px;
-  width: 100%;
+.app {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 15px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 15px #a600ff;
 }
 
-.logo-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  height: 48px;
-  object-fit: contain;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
+header h1 {
+  font-size: 28px;
+  margin: 10px 0 0;
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: #aaa;
-  margin-bottom: 1rem;
+  font-size: 14px;
+  margin: 5px 0 15px;
+  opacity: 0.7;
 }
 
-.input-group {
-  margin-bottom: 1rem;
+label {
+  display: block;
+  margin-top: 15px;
 }
 
 input {
-  width: 100%;
-  padding: 0.6rem;
+  width: 80%;
+  padding: 10px;
+  margin-top: 5px;
   border-radius: 8px;
   border: none;
-  font-size: 1rem;
 }
 
 button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  border: none;
-  border-radius: 12px;
-  background: #a64ac9;
+  margin-top: 15px;
+  padding: 12px 25px;
+  background: #b100ff;
   color: white;
-  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 10px #a64ac9;
-  transition: transform 0.2s, box-shadow 0.3s;
+  transition: 0.3s;
 }
 
 button:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 15px #a64ac9;
+  background: #d000ff;
 }
 
-.result-box {
-  margin-top: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 1rem;
-  border-radius: 12px;
-  text-align: center;
+.start-btn {
+  animation: pulse 1.5s infinite;
+  display: block;
+  margin: 20px auto 0;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0px #fff; }
+  50% { box-shadow: 0 0 15px #ffffffaa; }
+  100% { box-shadow: 0 0 0px #fff; }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.greed-bar-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
 }
 
 .greed-bar {
-  height: 18px;
+  height: 15px;
   width: 100%;
-  background: #222;
-  border-radius: 10px;
-  margin-top: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.greed-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #b5179e, #7209b7);
-  width: 0%;
-  border-radius: 10px;
-  transition: width 0.3s ease-in-out;
-}
-
-.greed-emojis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-size: 1.1rem;
-}
-
-.status-message {
-  text-align: center;
-  font-size: 0.95rem;
-  margin-top: 1rem;
-  color: #eee;
-  padding: 0.4rem;
+  background: linear-gradient(to right, #00ffb3, #ff00ff);
+  transition: width 0.3s;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  animation: fadeInUp 0.5s ease;
+  margin: 0 10px;
 }
 
-.control-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+#notifications {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ffd;
 }
 
-.control-buttons button {
-  flex: 1;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 500px) {
-  .title {
-    font-size: 1.6rem;
-  }
-
-  button {
-    font-size: 1rem;
-  }
+.reset-btn {
+  margin-top: 25px;
+  background: #444;
 }
