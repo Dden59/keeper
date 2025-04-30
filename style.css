@@ -1,141 +1,108 @@
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #1e003d, #6a00ff);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
-    padding: 20px;
-    overflow-x: hidden;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #2d005f, #7f00ff);
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
 .app {
-    width: 100%;
-    max-width: 400px;
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 30px rgba(154, 71, 255, 0.8);
-    backdrop-filter: blur(10px);
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 15px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 15px #a600ff;
 }
 
-.logo {
-    text-align: center;
-    font-size: 32px;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #ffffff;
-    text-shadow: 0 0 8px #a84bff;
+header h1 {
+  font-size: 28px;
+  margin: 10px 0 0;
 }
 
-.slogan {
-    text-align: center;
-    font-size: 14px;
-    color: #cccccc;
-    margin-bottom: 20px;
+.subtitle {
+  font-size: 14px;
+  margin: 5px 0 15px;
+  opacity: 0.7;
 }
 
-.section {
-    margin-bottom: 15px;
+label {
+  display: block;
+  margin-top: 15px;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
+  width: 80%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: none;
 }
 
-.btn {
-    width: 100%;
-    padding: 12px;
-    background: #8c1aff;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    transition: background 0.3s;
+button {
+  margin-top: 15px;
+  padding: 12px 25px;
+  background: #b100ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.btn:hover {
-    background: #a84bff;
+button:hover {
+  background: #d000ff;
 }
 
-.animated {
-    animation: pulse 2s infinite;
+.start-btn {
+  animation: pulse 1.5s infinite;
+  display: block;
+  margin: 20px auto 0;
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 5px #8c1aff; }
-    50% { box-shadow: 0 0 20px #c178ff; }
-    100% { box-shadow: 0 0 5px #8c1aff; }
+  0% { box-shadow: 0 0 0px #fff; }
+  50% { box-shadow: 0 0 15px #ffffffaa; }
+  100% { box-shadow: 0 0 0px #fff; }
 }
 
-.bet-display p {
-    margin: 5px 0;
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.greed-bar-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
 }
 
 .greed-bar {
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  height: 15px;
+  width: 100%;
+  background: linear-gradient(to right, #00ffb3, #ff00ff);
+  transition: width 0.3s;
+  border-radius: 8px;
+  margin: 0 10px;
 }
 
-.greed-bar .bar {
-    flex-grow: 1;
-    height: 10px;
-    background: #ffffff20;
-    margin: 0 10px;
-    border-radius: 5px;
-    position: relative;
-    overflow: hidden;
+#notifications {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ffd;
 }
 
-.greed-bar .bar::after {
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #e100ff, #8c1aff);
-    transition: width 0.3s ease;
-    border-radius: 5px;
-}
-
-.emoji {
-    font-size: 20px;
-}
-
-.notifications {
-    margin-top: 15px;
-    font-size: 14px;
-    text-align: center;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px;
-    display: none;
-}
-
-.button-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.success {
-    background: #2ecc71;
-}
-
-.danger {
-    background: #e74c3c;
-}
-
-.reset {
-    background: #555;
+.reset-btn {
+  margin-top: 25px;
+  background: #444;
 }
