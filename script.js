@@ -1,114 +1,121 @@
-let baseBet = 100;
-let currentBet = 100;
-let balance = 1000;
-let winStreak = 0;
-let loseStreak = 0;
-let greedLevel = 0;
-let gameStarted = false;
-let totalProfitTarget = 0;
+let balance = 0;
+let stake = 0;
+let defaultStake = 0;
+let losses = 0;
+let wins = 0;
+let greed = 50;
 
-const greedBar = document.getElementById("greedBar");
-const currentBetDisplay = document.getElementById("currentBet");
-const currentBalanceDisplay = document.getElementById("currentBalance");
-const notifications = document.getElementById("notifications");
+function calculateInitialStake() {
+  const input = parseFloat(document.getElementById("balance-input").value);
+  if (isNaN(input) || input < 1000) {
+    alert("Введите корректный баланс (рекомендуется от 2500₽)");
+    return;
+  }
+
+  balance = input;
+
+  // расчет ставки так, чтобы выдержать 6 проигрышей (с учетом удвоений)
+  let maxSteps = 6;
+  let sum = 0;
+  let temp = 1.5;
+  for (let i = 0; i < maxSteps; i++) {
+    sum += Math.pow(temp, i);
+  }
+  stake = Math.floor(balance / sum);
+  defaultStake = stake;
+
+  document.getElementById("suggestion-box").innerText = `Рекомендуемая ставка: ${stake}₽`;
+  const inputField = document.getElementById("custom-stake-input");
+  inputField.value = stake;
+  inputField.disabled = false;
+}
+
+function startGame() {
+  const customStake = parseFloat(document.getElementById("custom-stake-input").value);
+  if (isNaN(customStake) || customStake < 1) {
+    alert("Введите корректную ставку");
+    return;
+  }
+
+  stake = customStake;
+  defaultStake = stake;
+  document.getElementById("current-stake").innerText = stake;
+  document.getElementById("current-balance").innerText = balance;
+  document.getElementById("start-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "block";
+  updateGreedBar();
+}
+
+function handleResult(win) {
+  if (win) {
+    balance += stake * 0.5;
+    stake = defaultStake;
+    losses = 0;
+    wins++;
+    showNotification(wins);
+    greed = Math.max(greed - 10, 0);
+  } else {
+    balance -= stake;
+    losses++;
+    wins = 0;
+    greed = Math.min(greed + 10, 100);
+
+    stake = getRecoveryStake();
+    if (balance < stake) {
+      showFixedMessage("У вас недостаточно средств для ставки 😭");
+    }
+  }
+
+  updateUI();
+}
+
+function getRecoveryStake() {
+  let required = 0;
+  for (let i = 0; i < losses; i++) {
+    required += defaultStake * Math.pow(1.5, i);
+  }
+  const goal = balance + required;
+  let nextStake = (goal - balance) / 0.5;
+  return Math.ceil(nextStake);
+}
 
 function updateGreedBar() {
-    greedBar.style.setProperty("--greed", `${greedLevel}%`);
-    greedBar.style.setProperty("width", `${greedLevel}%`);
+  document.getElementById("greed-bar").style.width = `${greed}%`;
 }
 
-function showNotification(msg) {
-    notifications.innerText = msg;
-    notifications.style.display = "block";
-    setTimeout(() => {
-        notifications.style.display = "none";
-    }, 3500);
+function updateUI() {
+  document.getElementById("current-balance").innerText = Math.floor(balance);
+  document.getElementById("current-stake").innerText = Math.floor(stake);
+  updateGreedBar();
+
+  if (balance < defaultStake * 2) {
+    showFixedMessage("Высокий риск слить баланс!");
+  }
 }
 
-function calculateNextBet(losses, targetProfit) {
-    return Math.ceil((targetProfit + (baseBet * losses)) / 0.5);
+function showNotification(count) {
+  const notify = document.getElementById("notifications");
+  let message = "";
+
+  switch (count) {
+    case 2: message = "У тебя хорошо получается, продолжай в том же духе!"; break;
+    case 3: message = "Горжусь тобой 😇"; break;
+    case 4: message = "Пристегни ремни, мы взлетаем 🚀"; break;
+    case 5: message = "Куда потратим деньги? 😂"; break;
+  }
+
+  if (losses === 2) message = "Ничего страшного, я верю в тебя 🥺";
+  if (losses === 3) message = "Сделай паузу на кофе ☕️";
+  if (losses === 4) message = "Высокий риск слить баланс!";
+
+  if (message) notify.innerText = message;
+  else notify.innerText = "";
+}
+
+function showFixedMessage(msg) {
+  document.getElementById("notifications").innerText = msg;
 }
 
 function resetGame() {
-    gameStarted = false;
-    winStreak = 0;
-    loseStreak = 0;
-    greedLevel = 0;
-    notifications.innerText = "";
-    document.getElementById("gameSection").style.display = "none";
+  location.reload();
 }
-
-document.getElementById("startBtn").addEventListener("click", () => {
-    baseBet = parseFloat(document.getElementById("baseBet").value);
-    balance = parseFloat(document.getElementById("balance").value);
-    currentBet = baseBet;
-    totalProfitTarget = balance;
-
-    document.getElementById("gameSection").style.display = "block";
-    updateDisplay();
-    gameStarted = true;
-});
-
-document.getElementById("winBtn").addEventListener("click", () => {
-    if (!gameStarted) return;
-
-    const profit = currentBet * 1.5;
-    balance += profit;
-    winStreak++;
-    loseStreak = 0;
-
-    if (greedLevel > 0) greedLevel -= 10;
-    updateGreedBar();
-
-    totalProfitTarget = balance;
-
-    if (winStreak === 2) showNotification("У тебя хорошо получается, продолжай в том же духе👍");
-    if (winStreak === 3) showNotification("Горжусь тобой 😇");
-    if (winStreak === 4) showNotification("Пристегни ремни, мы взлетаем🚀");
-    if (winStreak === 5) showNotification("Куда потратим деньги? 😂");
-
-    currentBet = baseBet;
-    updateDisplay();
-});
-
-document.getElementById("loseBtn").addEventListener("click", () => {
-    if (!gameStarted) return;
-
-    balance -= currentBet;
-    loseStreak++;
-    winStreak = 0;
-
-    if (greedLevel < 100) greedLevel += 10;
-    updateGreedBar();
-
-    if (loseStreak === 2) showNotification("Ничего страшного, я верю в тебя 🥺");
-    if (loseStreak === 3) showNotification("Сделай паузу на кофе ☕️");
-    if (loseStreak === 4) showNotification("Высокий риск слить баланс!");
-
-    if (balance <= 0) {
-        showNotification("У вас недостаточно средств для ставки 😭");
-        return;
-    }
-
-    let nextBet = calculateNextBet(loseStreak, totalProfitTarget - balance);
-    if (nextBet > balance) {
-        showNotification("У вас недостаточно средств для ставки 😭");
-        return;
-    }
-
-    currentBet = nextBet;
-    updateDisplay();
-});
-
-function updateDisplay() {
-    currentBetDisplay.textContent = currentBet.toFixed(2);
-    currentBalanceDisplay.textContent = balance.toFixed(2);
-
-    if (balance < baseBet * 3) {
-        showNotification("Осталось мало попыток.");
-    }
-}
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-    window.location.reload();
-});
