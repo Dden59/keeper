@@ -1,101 +1,115 @@
-let userBalance = 0;
-let currentBet = 0;
-let greedLevel = 0;
+let initialBalance = 0;
+let currentBalance = 0;
+let baseBet = 0;
+let currentStep = 0;
 let winStreak = 0;
-let loseStreak = 0;
-let notifications = document.getElementById('notificationBox');
+let lossStreak = 0;
 
-function calculateRecommendedBet() {
-    userBalance = parseFloat(document.getElementById('userBalance').value);
-    let safeBet = Math.floor(userBalance / ((1.5 ** 6) - 1)); // расчет на 6 проигрышей
-    currentBet = safeBet;
-    document.getElementById('recommendedBetDisplay').innerText = `${safeBet}₽`;
-    document.getElementById('currentBetInput').value = safeBet;
-    document.getElementById('startSection').classList.add('hidden');
-    document.getElementById('betSection').classList.remove('hidden');
+function calculateInitialBet() {
+  const balance = Number(document.getElementById("balance").value);
+  if (!balance || balance < 100) {
+    alert("Введите корректный баланс.");
+    return;
+  }
+  initialBalance = balance;
+  currentBalance = balance;
+
+  const bet = calculateSafeBet(balance);
+  baseBet = bet;
+
+  document.getElementById("bet").value = bet.toFixed(2);
+  document.getElementById("bet-setup").style.display = "block";
+}
+
+function calculateSafeBet(balance) {
+  const multiplier = 1.5;
+  let bet = 1;
+  while (true) {
+    let total = 0;
+    for (let i = 0; i < 6; i++) {
+      total += bet * (2 ** i);
+    }
+    const recover = bet * (2 ** 6);
+    const needed = total - recover / multiplier;
+    if (needed <= balance) break;
+    bet -= 0.1;
+  }
+  return Math.floor(bet * 100) / 100;
 }
 
 function startGame() {
-    currentBet = parseFloat(document.getElementById('currentBetInput').value);
-    document.getElementById('displayBalance').innerText = `${userBalance}₽`;
-    document.getElementById('displayBet').innerText = `${currentBet}₽`;
-    document.getElementById('betSection').classList.add('hidden');
-    document.getElementById('gameSection').classList.remove('hidden');
+  baseBet = Number(document.getElementById("bet").value);
+  if (!baseBet || baseBet <= 0) {
+    alert("Укажите корректную ставку");
+    return;
+  }
+
+  currentBalance = initialBalance;
+  currentStep = 0;
+  winStreak = 0;
+  lossStreak = 0;
+
+  document.getElementById("game-ui").style.display = "block";
+  document.getElementById("status").textContent = `Текущий баланс: ${currentBalance.toFixed(2)} ₽`;
 }
 
-function handleResult(isWin) {
-    if (isWin) {
-        userBalance += currentBet * 0.5;
-        winStreak++;
-        loseStreak = 0;
-        greedLevel = Math.max(0, greedLevel - 10);
-    } else {
-        userBalance -= currentBet;
-        loseStreak++;
-        winStreak = 0;
-        greedLevel += 15;
+function recordResult(isWin) {
+  const bet = baseBet * (2 ** currentStep);
 
-        // рассчёт новой ставки
-        currentBet = calculateRecoveryBet();
-        if (currentBet > userBalance) {
-            showNotification("У вас недостаточно средств для ставки 😭");
-            currentBet = 0;
-        }
-    }
+  if (bet > currentBalance) {
+    document.getElementById("status").textContent = "У вас недостаточно средств для ставки 😭";
+    return;
+  }
 
-    updateUI();
+  if (isWin) {
+    const winAmount = bet * 1.5;
+    currentBalance += (winAmount - bet);
+    currentStep = 0;
+    winStreak++;
+    lossStreak = 0;
+  } else {
+    currentBalance -= bet;
+    currentStep++;
+    winStreak = 0;
+    lossStreak++;
+  }
+
+  updateGreed(isWin);
+  showFeedback();
+  document.getElementById("status").textContent = `Текущий баланс: ${currentBalance.toFixed(2)} ₽`;
 }
 
-function calculateRecoveryBet() {
-    let lostAmount = 0;
-    for (let i = 0; i < loseStreak; i++) {
-        lostAmount += currentBet * (1.5 ** i);
-    }
-    return Math.ceil((lostAmount + currentBet * 0.5) / 1.5);
+function updateGreed(isWin) {
+  const greed = document.getElementById("greed");
+  let value = parseInt(greed.value);
+  if (isWin) {
+    value = Math.max(0, value - 10);
+  } else {
+    value = Math.min(100, value + 20);
+  }
+  greed.value = value;
+  document.getElementById("greed-emoji").textContent = value < 30 ? "😇" : value < 70 ? "😐" : "😈";
 }
 
-function updateUI() {
-    document.getElementById('displayBalance').innerText = `${Math.floor(userBalance)}₽`;
-    document.getElementById('displayBet').innerText = `${Math.floor(currentBet)}₽`;
-    updateGreedBar();
-    showStreakMessages();
+function showFeedback() {
+  const status = document.getElementById("status");
 
-    if (userBalance <= (userBalance * 0.3)) {
-        showNotification("Высокий риск слить баланс!");
-    }
-}
+  if (winStreak === 2) status.textContent = "У тебя хорошо получается, продолжай в том же духе 👍";
+  if (winStreak === 3) status.textContent = "Горжусь тобой 😇";
+  if (winStreak === 4) status.textContent = "Пристегни ремни, мы взлетаем 🚀";
+  if (winStreak === 5) status.textContent = "Куда потратим деньги? 😂";
 
-function updateGreedBar() {
-    const fill = document.getElementById('greedFill');
-    let percentage = Math.min(100, greedLevel);
-    fill.style.width = percentage + "%";
-
-    const message = document.getElementById('greedMessage');
-    if (percentage < 25) message.innerText = "Холоден как лёд";
-    else if (percentage < 50) message.innerText = "Начинает закипать...";
-    else if (percentage < 75) message.innerText = "Жарко!";
-    else message.innerText = "Ты на грани, остынь!";
-}
-
-function showStreakMessages() {
-    let msg = "";
-    if (winStreak === 2) msg = "У тебя хорошо получается, продолжай в том же духе👍";
-    if (winStreak === 3) msg = "Горжусь тобой 😇";
-    if (winStreak === 4) msg = "Пристегни ремни, мы взлетаем🚀";
-    if (winStreak === 5) msg = "Куда потратим деньги? 😂";
-
-    if (loseStreak === 2) msg = "Ничего страшного, я верю в тебя 🥺";
-    if (loseStreak === 3) msg = "Сделай паузу на кофе ☕️";
-    if (loseStreak === 4) msg = "Высокий риск слить баланс!";
-
-    if (msg) showNotification(msg);
-}
-
-function showNotification(message) {
-    notifications.innerText = message;
-    notifications.style.display = 'block';
+  if (lossStreak === 2) status.textContent = "Ничего страшного, я верю в тебя 🥺";
+  if (lossStreak === 3) status.textContent = "Сделай паузу на кофе ☕️";
+  if (lossStreak >= 4) status.textContent = "Высокий риск слить баланс! ⚠️";
 }
 
 function resetGame() {
-    window.location.reload();
+  document.getElementById("balance").value = "";
+  document.getElementById("bet").value = "";
+  document.getElementById("bet-setup").style.display = "none";
+  document.getElementById("game-ui").style.display = "none";
+  document.getElementById("status").textContent = "";
+  document.getElementById("greed").value = 0;
+  document.getElementById("greed-emoji").textContent = "😇";
 }
