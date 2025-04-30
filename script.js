@@ -1,133 +1,121 @@
 let balance = 0;
-let baseBet = 0;
-let currentBet = 0;
+let stake = 0;
+let defaultStake = 0;
 let losses = 0;
 let wins = 0;
-let greedLevel = 0;
+let greed = 50;
 
-const balanceInput = document.getElementById('balance');
-const betInput = document.getElementById('bet');
-const resultBox = document.getElementById('result');
-const greedFill = document.getElementById('greed-fill');
-const statusMsg = document.getElementById('status-message');
-
-function calculateRecommendedBet(balance) {
-  // Расчет ставки, чтобы перекрыть 6 проигрышей подряд при коэффициенте 1.5x
-  let bet = 1;
-  let total = 0;
-  for (let i = 0; i < 6; i++) {
-    total += bet;
-    bet *= 2;
+function calculateInitialStake() {
+  const input = parseFloat(document.getElementById("balance-input").value);
+  if (isNaN(input) || input < 1000) {
+    alert("Введите корректный баланс (рекомендуется от 2500₽)");
+    return;
   }
-  return Math.floor(balance / total);
+
+  balance = input;
+
+  // расчет ставки так, чтобы выдержать 6 проигрышей (с учетом удвоений)
+  let maxSteps = 6;
+  let sum = 0;
+  let temp = 1.5;
+  for (let i = 0; i < maxSteps; i++) {
+    sum += Math.pow(temp, i);
+  }
+  stake = Math.floor(balance / sum);
+  defaultStake = stake;
+
+  document.getElementById("suggestion-box").innerText = `Рекомендуемая ставка: ${stake}₽`;
+  const inputField = document.getElementById("custom-stake-input");
+  inputField.value = stake;
+  inputField.disabled = false;
 }
 
 function startGame() {
-  balance = parseInt(balanceInput.value);
-  if (isNaN(balance) || balance < 100) {
-    alert("Введите корректный баланс (от 100₽)");
+  const customStake = parseFloat(document.getElementById("custom-stake-input").value);
+  if (isNaN(customStake) || customStake < 1) {
+    alert("Введите корректную ставку");
     return;
   }
-  baseBet = calculateRecommendedBet(balance);
-  betInput.value = baseBet;
-  currentBet = baseBet;
-  losses = 0;
-  wins = 0;
-  greedLevel = 0;
+
+  stake = customStake;
+  defaultStake = stake;
+  document.getElementById("current-stake").innerText = stake;
+  document.getElementById("current-balance").innerText = balance;
+  document.getElementById("start-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "block";
   updateGreedBar();
-  resultBox.innerText = `Рекомендуемая ставка: ${baseBet}₽ (хватает на 6 проигрышей подряд при 1.5x)`;
-  statusMsg.innerText = "Готово к старту 🚀";
+}
+
+function handleResult(win) {
+  if (win) {
+    balance += stake * 0.5;
+    stake = defaultStake;
+    losses = 0;
+    wins++;
+    showNotification(wins);
+    greed = Math.max(greed - 10, 0);
+  } else {
+    balance -= stake;
+    losses++;
+    wins = 0;
+    greed = Math.min(greed + 10, 100);
+
+    stake = getRecoveryStake();
+    if (balance < stake) {
+      showFixedMessage("У вас недостаточно средств для ставки 😭");
+    }
+  }
+
+  updateUI();
+}
+
+function getRecoveryStake() {
+  let required = 0;
+  for (let i = 0; i < losses; i++) {
+    required += defaultStake * Math.pow(1.5, i);
+  }
+  const goal = balance + required;
+  let nextStake = (goal - balance) / 0.5;
+  return Math.ceil(nextStake);
 }
 
 function updateGreedBar() {
-  let level = Math.min((losses / 6) * 100, 100);
-  greedFill.style.width = `${level}%`;
+  document.getElementById("greed-bar").style.width = `${greed}%`;
 }
 
-function handleWin() {
-  balance += currentBet * 0.5; // потому что выигрыш на 1.5x
-  wins++;
-  losses = 0;
-  currentBet = baseBet;
+function updateUI() {
+  document.getElementById("current-balance").innerText = Math.floor(balance);
+  document.getElementById("current-stake").innerText = Math.floor(stake);
   updateGreedBar();
-  updateStatus("win");
-  showResult(`Выигрыш! Новый баланс: ${Math.round(balance)}₽`);
+
+  if (balance < defaultStake * 2) {
+    showFixedMessage("Высокий риск слить баланс!");
+  }
 }
 
-function handleLoss() {
-  balance -= currentBet;
-  losses++;
-  currentBet = calculateRecoveryBet();
-  updateGreedBar();
-  updateStatus("loss");
+function showNotification(count) {
+  const notify = document.getElementById("notifications");
+  let message = "";
 
-  if (balance <= 0) {
-    showResult("Баланс исчерпан 😢");
-    statusMsg.innerText = "У вас недостаточно средств для ставки 😭";
-    return;
+  switch (count) {
+    case 2: message = "У тебя хорошо получается, продолжай в том же духе!"; break;
+    case 3: message = "Горжусь тобой 😇"; break;
+    case 4: message = "Пристегни ремни, мы взлетаем 🚀"; break;
+    case 5: message = "Куда потратим деньги? 😂"; break;
   }
 
-  if (currentBet > balance) {
-    showResult(`Недостаточно средств на следующую ставку: ${currentBet}₽`);
-    statusMsg.innerText = "У вас недостаточно средств для ставки 😭";
-    return;
-  }
+  if (losses === 2) message = "Ничего страшного, я верю в тебя 🥺";
+  if (losses === 3) message = "Сделай паузу на кофе ☕️";
+  if (losses === 4) message = "Высокий риск слить баланс!";
 
-  showResult(`Проигрыш. Следующая ставка: ${currentBet}₽`);
+  if (message) notify.innerText = message;
+  else notify.innerText = "";
 }
 
-function calculateRecoveryBet() {
-  let neededProfit = wins * baseBet * 0.5 + losses * baseBet;
-  for (let bet = baseBet; bet < balance; bet++) {
-    let totalLoss = 0;
-    let b = bet;
-    for (let i = 0; i < losses; i++) {
-      totalLoss += b;
-      b *= 2;
-    }
-    if ((b * 1.5) - totalLoss >= neededProfit) return Math.ceil(b);
-  }
-  return baseBet;
-}
-
-function showResult(message) {
-  resultBox.innerText = message;
+function showFixedMessage(msg) {
+  document.getElementById("notifications").innerText = msg;
 }
 
 function resetGame() {
-  balance = 0;
-  baseBet = 0;
-  currentBet = 0;
-  losses = 0;
-  wins = 0;
-  betInput.value = "";
-  balanceInput.value = "";
-  greedFill.style.width = "0%";
-  resultBox.innerText = "";
-  statusMsg.innerText = "Сброс выполнен.";
-}
-
-function updateStatus(result) {
-  if (result === "win") {
-    const messages = [
-      "У тебя хорошо получается, продолжай в том же духе 👍",
-      "Горжусь тобой 😇",
-      "Пристегни ремни, мы взлетаем 🚀",
-      "Куда потратим деньги? 😂"
-    ];
-    if (wins <= messages.length)
-      statusMsg.innerText = messages[wins - 1];
-  } else {
-    const messages = [
-      "Ничего страшного, я верю в тебя 🥺",
-      "Сделай паузу на кофе ☕️",
-      "Высокий риск слить баланс!"
-    ];
-    if (losses <= messages.length)
-      statusMsg.innerText = messages[losses - 1];
-  }
-
-  if (balance <= baseBet * 2) {
-    statusMsg.innerText = "У вас недостаточно средств для ставки 😭";
-  }
+  location.reload();
 }
